@@ -1,0 +1,329 @@
+/* ==========================================================================
+   Weave · Theme layer
+   Paper 纸本 (default) / Night Silk 夜色
+   Built on the same tokens as styles.css.
+   ========================================================================== */
+
+/* --- sliding theme switch (click to toggle; knob slides) ------------------ */
+
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.theme-rail {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-light);
+  transition: border-color 0.2s;
+}
+.theme-switch:hover .theme-rail { border-color: var(--accent); }
+.theme-thumb {
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: var(--accent);
+  transition: transform 0.42s var(--ease);
+}
+[data-theme="dark"] .theme-thumb { transform: translateX(28px); }
+.theme-icon {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translateY(-50%);
+  color: var(--ink-3);
+  pointer-events: none;
+  transition: color 0.2s;
+}
+.theme-icon .icon { width: 14px; height: 14px; stroke-width: 1.7; }
+.theme-sun { left: 5px; }
+.theme-moon { right: 5px; }
+[data-theme="light"] .theme-sun { color: var(--paper-light); }
+[data-theme="dark"] .theme-moon { color: var(--paper-light); }
+
+/* --- theme transition timing ---------------------------------------------
+   Chromium/Edge use a real cross-fade via the View Transitions API.
+   Other browsers get a colour/border/shadow cross-fade for the same window. */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) { opacity: 1; }
+::view-transition-new(root) {
+  animation: theme-dissolve 1000ms cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+::view-transition-group(root) { animation-duration: 1000ms; }
+@keyframes theme-dissolve {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+html.theme-transition,
+html.theme-transition * {
+  transition-property: color, background-color, border-color, box-shadow, fill, stroke !important;
+  transition-duration: 1000ms !important;
+  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1) !important;
+}
+html.theme-transition .theme-thumb {
+  transition-property: transform, background-color !important;
+  transition-duration: 420ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-group(root) { animation-duration: 1ms !important; }
+  html.theme-transition,
+  html.theme-transition * { transition-duration: 1ms !important; }
+  ::view-transition-new(root) { animation-duration: 1ms !important; }
+}
+
+/* --- Night Silk tokens ---------------------------------------------------- */
+
+[data-theme="light"] { color-scheme: light; }
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #14110d;
+  --paper-2: #191510;
+  --paper-3: #221c16;
+  --paper-light: #1e1914;
+
+  --ink: #eae1d1;
+  --ink-2: #c4b7a3;
+  --ink-3: #938672;
+
+  --rule: rgba(234, 225, 209, 0.16);
+  --rule-soft: rgba(234, 225, 209, 0.09);
+  --rule-strong: rgba(234, 225, 209, 0.3);
+
+  --accent: #df7359;
+  --accent-deep: #f0937a;
+  --accent-wash: rgba(223, 115, 89, 0.12);
+
+  --olive: #c0ce8f;
+  --indigo: #93b7d0;
+  --ochre: #d8b36f;
+  --teal: #74c0c0;
+  --plum: #c194b2;
+  --sienna: #d28f63;
+
+  --sky: #74c0c0;
+  --amber: #d8b36f;
+  --lime: #b9cb87;
+  --mint: #a9c59b;
+  --violet: #c194b2;
+  --rose: #e08a76;
+}
+
+[data-theme="dark"] body {
+  background:
+    radial-gradient(1200px 900px at 50% 34%, rgba(239, 227, 205, 0.035), transparent 72%),
+    radial-gradient(900px 700px at 90% 108%, rgba(223, 115, 89, 0.035), transparent 60%),
+    var(--paper);
+}
+[data-theme="dark"] body::before {
+  mix-blend-mode: screen;
+  opacity: 0.26;
+}
+[data-theme="dark"] ::selection {
+  background: rgba(223, 115, 89, 0.32);
+  color: var(--ink);
+}
+[data-theme="dark"] * {
+  scrollbar-color: rgba(234, 225, 209, 0.24) transparent;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(234, 225, 209, 0.24);
+}
+
+/* small warm-glass washes that were hardcoded in the paper theme */
+[data-theme="dark"] .stamp--demo,
+[data-theme="dark"] .icon-btn:hover,
+[data-theme="dark"] .feed-item.t-alert,
+[data-theme="dark"] .switch[aria-pressed="true"] .switch-track {
+  background: rgba(223, 115, 89, 0.09);
+}
+[data-theme="dark"] .task-item:hover { background: rgba(234, 225, 209, 0.045); }
+[data-theme="dark"] .task-item.is-selected { background: rgba(234, 225, 209, 0.065); }
+[data-theme="dark"] .feed-item:hover { background: rgba(234, 225, 209, 0.05); }
+
+/* --- stage / loom -------------------------------------------------------- */
+
+[data-theme="dark"] .stage {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 47px, rgba(234, 225, 209, 0.045) 47px 48px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgba(234, 225, 209, 0.045) 47px 48px),
+    var(--paper-light);
+}
+[data-theme="dark"] .stage::before { border-color: rgba(234, 225, 209, 0.09); }
+[data-theme="dark"] .stage::after { color: rgba(234, 225, 209, 0.042); }
+[data-theme="dark"] .stage-grid {
+  background-image: radial-gradient(circle, rgba(234, 225, 209, 0.17) 0.7px, transparent 0.8px);
+}
+[data-theme="dark"] .orbits span { border-color: rgba(234, 225, 209, 0.13); }
+[data-theme="dark"] .orbits span:nth-child(2) { border-color: rgba(234, 225, 209, 0.07); }
+[data-theme="dark"] .edge { stroke: rgba(234, 225, 209, 0.25); }
+[data-theme="dark"] .edge.is-link { stroke: rgba(234, 225, 209, 0.3); }
+[data-theme="dark"] .edge.is-connected { stroke: rgba(234, 225, 209, 0.45); }
+[data-theme="dark"] .msg-core { stroke: var(--paper-light); }
+[data-theme="dark"] .stage-now {
+  box-shadow: 0 -12px 20px -16px rgba(0, 0, 0, 0.7);
+}
+
+/* --- agents: dark silk is lifted toward warm starlight ------------------ */
+
+[data-theme="dark"] .node {
+  --c-ink: color-mix(in srgb, var(--c) 55%, #f0e5d2);
+}
+[data-theme="dark"] .node-btn {
+  border-color: var(--c-ink);
+  color: var(--c-ink);
+  background: var(--paper-light);
+  box-shadow:
+    inset 0 0 0 3px var(--paper-light),
+    inset 0 0 0 4px color-mix(in srgb, var(--c-ink) 50%, transparent);
+}
+[data-theme="dark"] .node-btn::before { color: var(--c-ink); }
+[data-theme="dark"] .node-btn:hover { background: #2a231b; }
+[data-theme="dark"] .node-ring .ring-track { stroke: rgba(234, 225, 209, 0.12); }
+[data-theme="dark"] .node-ring .ring-value { stroke: var(--c-ink); }
+[data-theme="dark"] .node.is-selected .node-btn,
+[data-theme="dark"] .node.is-edge-hover .node-btn {
+  box-shadow:
+    0 0 0 2px var(--paper-light),
+    0 0 0 3px var(--accent),
+    inset 0 0 0 3px var(--paper-light),
+    inset 0 0 0 4px color-mix(in srgb, var(--c-ink) 50%, transparent);
+}
+[data-theme="dark"] .node.is-edge-hover .node-name { color: var(--accent); }
+
+/* --- weave lanes / segments --------------------------------------------- */
+
+[data-theme="dark"] .lane-row { border-bottom-color: rgba(234, 225, 209, 0.1); }
+[data-theme="dark"] .lane-label { --c-ink: color-mix(in srgb, var(--c) 55%, #f0e5d2); }
+[data-theme="dark"] .lane-dot { background: var(--c-ink); }
+[data-theme="dark"] .seg {
+  --c-ink: color-mix(in srgb, var(--c) 55%, #f0e5d2);
+  border-left-color: var(--c-ink);
+  background: color-mix(in srgb, var(--c-ink) 17%, transparent);
+}
+[data-theme="dark"] .seg-fill {
+  background: color-mix(in srgb, var(--c-ink) 32%, transparent);
+}
+[data-theme="dark"] .seg.is-running {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--c-ink) 22%, transparent);
+}
+[data-theme="dark"] .seg.is-running .seg-fill {
+  background-image: repeating-linear-gradient(45deg, transparent 0 3px, color-mix(in srgb, var(--c-ink) 28%, transparent) 3px 4px);
+}
+[data-theme="dark"] .seg.is-selected {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--c-ink) 30%, transparent);
+  box-shadow:
+    inset 0 0 0 1px rgba(223, 115, 89, 0.55),
+    inset 0 -2px 0 var(--accent);
+}
+[data-theme="dark"] .seg.is-edge-hover {
+  border-left-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--c-ink) 45%, transparent) !important;
+  box-shadow:
+    inset 0 0 0 1px var(--accent),
+    inset 0 -2px 0 var(--accent),
+    0 0 12px -2px rgba(223, 115, 89, 0.62);
+}
+[data-theme="dark"] .seg.is-weave-dim { opacity: 0.18; }
+[data-theme="dark"] .lane-link { stroke: rgba(234, 225, 209, 0.18); }
+[data-theme="dark"] .lane-link-dot { fill: rgba(234, 225, 209, 0.38); }
+[data-theme="dark"] .lane-edge-mark { border-left-color: rgba(223, 115, 89, 0.72); }
+[data-theme="dark"] .blocker-band {
+  background: repeating-linear-gradient(45deg, rgba(223, 115, 89, 0.08) 0 4px, transparent 4px 8px);
+  border-left-color: rgba(223, 115, 89, 0.62);
+  border-right-color: rgba(223, 115, 89, 0.38);
+}
+[data-theme="dark"] .blocker-label {
+  background: var(--paper-light);
+  border-color: rgba(223, 115, 89, 0.45);
+  color: var(--accent-deep);
+}
+[data-theme="dark"] .lane-blocker-band,
+[data-theme="dark"] .wc-blocker-band {
+  border-color: rgba(223, 115, 89, 0.55);
+  background: rgba(223, 115, 89, 0.08);
+}
+[data-theme="dark"] .lane-blocker-fill,
+[data-theme="dark"] .wc-blocker-fill { background: rgba(223, 115, 89, 0.22); }
+
+/* compact weave */
+[data-theme="dark"] .wc-track { background: var(--paper-light); }
+[data-theme="dark"] .wc-fill {
+  background: linear-gradient(90deg, rgba(223, 115, 89, 0.55), rgba(223, 115, 89, 0.22));
+}
+[data-theme="dark"] .wc-ticks i,
+[data-theme="dark"] .wc-selected-seg,
+[data-theme="dark"] .wc-edge-work {
+  background: color-mix(in srgb, var(--c) 55%, #f0e5d2);
+}
+[data-theme="dark"] .wc-edge-span { background: rgba(223, 115, 89, 0.16); }
+
+/* --- tasks / ledger ------------------------------------------------------ */
+
+[data-theme="dark"] .ring-track { stroke: rgba(234, 225, 209, 0.12); }
+[data-theme="dark"] .task-owner { color: color-mix(in srgb, var(--agent-color) 55%, #f0e5d2); }
+[data-theme="dark"] .task-owner .dot { background: color-mix(in srgb, var(--agent-color) 55%, #f0e5d2); }
+[data-theme="dark"] .task-progress,
+[data-theme="dark"] .progress,
+[data-theme="dark"] .dt-bar { background: rgba(234, 225, 209, 0.1); }
+[data-theme="dark"] .task-progress i { background: color-mix(in srgb, var(--agent-color) 55%, #f0e5d2); }
+
+/* --- inspector ----------------------------------------------------------- */
+
+[data-theme="dark"] .inspector { --c-ink: color-mix(in srgb, var(--c) 55%, #f0e5d2); }
+[data-theme="dark"] .insp-avatar {
+  border-color: var(--c-ink);
+  background: var(--paper-light);
+  color: var(--c-ink);
+  box-shadow:
+    inset 0 0 0 3px var(--paper-light),
+    inset 0 0 0 4px color-mix(in srgb, var(--c-ink) 50%, transparent);
+}
+[data-theme="dark"] .insp-avatar::before { color: var(--c-ink); }
+[data-theme="dark"] .work-title .dot { background: var(--c-ink); }
+[data-theme="dark"] .progress-fill { background: var(--c-ink); }
+[data-theme="dark"] .work-card { background: var(--paper-light); }
+
+/* --- feed / notes -------------------------------------------------------- */
+
+[data-theme="dark"] .feed-text b.actor-name,
+[data-theme="dark"] .now-text b.actor-name {
+  color: color-mix(in srgb, var(--actor, var(--ink)) 55%, #f0e5d2) !important;
+}
+[data-theme="dark"] kbd { background: rgba(234, 225, 209, 0.08); }
+
+/* --- dialogs / popovers -------------------------------------------------- */
+
+[data-theme="dark"] .dialog { box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.46); }
+[data-theme="dark"] .dialog::backdrop { background: rgba(0, 0, 0, 0.64); }
+[data-theme="dark"] .blocker-pop { box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.46); }
+
+/* --- small screens ------------------------------------------------------- */
+
+@media (max-width: 820px) {
+  .theme-switch { gap: 0; }
+}

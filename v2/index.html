@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Weave · 织造观测台</title>
+<meta name="description" content="Weave Silk Edition — 多智能体协作的可观看、可回放、可品读的观测界面原型。">
+<meta name="theme-color" content="#f1ead9" id="themeColor">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("weave.v2.theme");
+      var theme = (saved === "dark" || saved === "light") ? saved : "light";
+      document.documentElement.setAttribute("data-theme", theme);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", theme === "dark" ? "#14110d" : "#f1ead9");
+    } catch (e) {}
+  })();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='2' fill='%23f1ead9'/%3E%3Cpath d='M16 4.5 26.5 10.5v11L16 27.5 5.5 21.5v-11z' fill='none' stroke='%23b23a26' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='16.4' r='2' fill='%23b23a26'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="live.css">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" stroke="none"/><rect x="14" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-restart" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3 6.3-2.1z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-3.5 8-10V5.5L12 2 4 5.5V12c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></symbol>
+    <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 15V3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8.5 13h7M8.5 17h4.5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="m19 15 .6 1.6 1.6.4-1.6.6L19 19.2l-.6-1.6-1.6-.6 1.6-.4z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m10.3 3.9-8.4 14.5A1.9 1.9 0 0 0 3.6 21h16.8a1.9 1.9 0 0 0 1.7-2.6L13.7 3.9a1.9 1.9 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-10.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M3 8V5a2 2 0 0 1 2-2h3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M21 16v3a2 2 0 0 1-2 2h-3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9.5 14h5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l2.5-7 5 14 2.5-7h4"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.1M12 19.5v2.1M2.4 12h2.1M19.5 12h2.1M5.2 5.2l1.5 1.5M17.3 17.3l1.5 1.5M18.8 5.2l-1.5 1.5M6.7 17.3l-1.5 1.5"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.4 14.8A8.6 8.6 0 0 1 9.2 3.6 8.6 8.6 0 1 0 20.4 14.8z"/></symbol>
+  </defs>
+</svg>
+<div class="app" id="app">
+
+  <header class="masthead">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 3.2 27.2 9.6v12.8L16 28.8 4.8 22.4V9.6z" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.1"/>
+        <path d="M16 10.2 21.8 13.5v6.8L16 23.6l-5.8-3.3v-6.8z" fill="none" stroke="currentColor" stroke-opacity=".7" stroke-width="1.1"/>
+        <circle cx="16" cy="16.6" r="2.1" fill="currentColor"/>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name">Weave</span>
+        <span class="brand-sub">织造观测台 · MULTI-AGENT OBSERVATORY</span>
+      </div>
+    </div>
+
+    <div class="mast-run">
+      <span class="docket"><span class="docket-label">运行记录 / RUN</span><b class="docket-id mono" id="runId">A7F3</b></span>
+      <span class="stamp" id="runStamp"><i class="stamp-dot" aria-hidden="true"></i><span id="runState">回放中</span></span>
+      <span class="stamp stamp--demo" title="脚本化模拟场景，非实时遥测">模拟运行</span>
+      <span class="run-short" id="runGoalShort">支付网关 · 幂等层重构</span>
+    </div>
+
+    <div class="transport" aria-label="回放控制">
+      <button class="icon-btn" id="restartBtn" type="button" title="重新播放（R）" aria-label="重新播放">
+        <svg class="icon"><use href="#i-restart"></use></svg>
+      </button>
+      <button class="play-btn" id="playBtn" type="button" aria-label="暂停回放">
+        <svg class="icon play-icon" id="playIcon"><use href="#i-pause" id="playIconUse"></use></svg>
+        <span id="playLabel">暂停</span>
+      </button>
+      <div class="speed" role="group" aria-label="播放速度">
+        <button class="speed-btn" type="button" data-speed="1" aria-pressed="true">1×</button>
+        <button class="speed-btn" type="button" data-speed="2" aria-pressed="false">2×</button>
+        <button class="speed-btn" type="button" data-speed="4" aria-pressed="false">4×</button>
+      </div>
+      <div class="clock" aria-label="回放时间">
+        <span class="clock-now mono" id="timeNow">00:00</span>
+        <span class="clock-total mono">/ <span id="timeTotal">11:40</span></span>
+      </div>
+      <button class="theme-switch" id="themeSwitch" type="button" role="switch" aria-checked="false" aria-label="明暗主题：纸本，切换到夜色" title="明暗主题：纸本，切换到夜色">
+        <span class="theme-rail" aria-hidden="true">
+          <span class="theme-thumb"></span>
+          <span class="theme-icon theme-sun"><svg class="icon"><use href="#i-sun"></use></svg></span>
+          <span class="theme-icon theme-moon"><svg class="icon"><use href="#i-moon"></use></svg></span>
+        </span>
+      </button>
+      <button class="icon-btn" id="helpBtn" type="button" title="键盘快捷键（?）" aria-label="键盘快捷键">
+        <svg class="icon"><use href="#i-keyboard"></use></svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="headline" aria-labelledby="goalTitle">
+    <div class="headline-rule">
+      <span class="headline-eyebrow">目标 / OBJECTIVE</span>
+      <span class="headline-started" id="runStarted">09:14 启动</span>
+    </div>
+    <h1 id="goalTitle">重构支付网关幂等层，消除重复扣款</h1>
+    <div class="headline-meta">
+      <span id="goalProject">pay-gateway</span><span class="meta-dot">·</span>
+      <span id="goalBranch" class="mono">fix/idempotency-layer</span>
+      <span class="headline-elapsed">已用时 <b id="goalElapsed" class="mono">00:00</b><span class="elapsed-sep">/</span>预计 <b id="goalEta" class="mono">11:40</b></span>
+      <span class="headline-token" title="累计 Token 消耗（模拟）"><b class="mono" id="tokenHead">0</b> TOKENS</span>
+    </div>
+  </section>
+
+  <main class="workspace">
+    <aside class="rail rail-left" aria-label="运行簿与任务索引">
+      <section class="ledger reveal">
+        <div class="sect-head">
+          <span class="sect-no">01</span>
+          <h2>运行簿</h2>
+          <span class="sect-en">RUN LEDGER</span>
+        </div>
+        <div class="ledger-progress">
+          <div class="pct-block">
+            <span class="pct-num" id="goalPct">0<span class="pct-sign">%</span></span>
+            <span class="pct-cap">整体进度</span>
+          </div>
+          <svg class="goal-ring" viewBox="0 0 76 76" aria-hidden="true">
+            <circle class="ring-track" cx="38" cy="38" r="30"/>
+            <circle class="ring-value" id="goalRing" cx="38" cy="38" r="30"/>
+          </svg>
+        </div>
+        <dl class="ledger-list">
+          <div class="ledger-row"><dt>并行智能体</dt><dd id="statActive">0<i>/5</i></dd></div>
+          <div class="ledger-row"><dt>完成事项</dt><dd id="statDone">0<i>/7</i></dd></div>
+          <div class="ledger-row"><dt>工具调用</dt><dd id="statCalls">0</dd></div>
+          <div class="ledger-row" id="statBlockedCell"><dt>阻塞</dt><dd id="statBlocked">0</dd></div>
+        </dl>
+      </section>
+
+      <section class="index reveal">
+        <div class="sect-head">
+          <span class="sect-no">02</span>
+          <h2>任务索引</h2>
+          <span class="sect-en">TASK INDEX</span>
+          <span class="sect-meta mono" id="taskCount">0/7</span>
+        </div>
+        <ol class="task-list" id="taskList" aria-label="任务列表"></ol>
+      </section>
+    </aside>
+
+    <div class="splitter splitter-left" id="splitLeft" role="separator" aria-orientation="vertical" aria-label="拖动调整左栏宽度，双击复位" title="拖动调整左栏宽度 / 双击复位"></div>
+
+    <section class="center">
+      <figure class="plate plate-graph reveal">
+        <figcaption class="plate-head">
+          <span class="plate-no">图版 I</span>
+          <div class="plate-title">
+            <h2>协作织造图</h2>
+            <span>COLLABORATION LOOM</span>
+          </div>
+          <div class="plate-actions">
+            <div class="legend" aria-hidden="true">
+              <span><i class="lg-dot lg-active"></i>执行中</span>
+              <span><i class="lg-dot lg-wait"></i>等待</span>
+              <span><i class="lg-dot lg-done"></i>已完成</span>
+            </div>
+            <div class="graph-zoom" role="group" aria-label="协作图缩放">
+              <button class="zoom-btn" id="zoomOut" type="button" title="缩小（-）" aria-label="缩小">−</button>
+              <button class="zoom-pct" id="zoomReset" type="button" title="恢复 100%（0 / 双击空白处）"><span id="zoomPct" aria-live="polite">100%</span></button>
+              <button class="zoom-btn" id="zoomIn" type="button" title="放大（+）" aria-label="放大">+</button>
+            </div>
+            <button class="chip-btn" id="focusBtn" type="button" aria-pressed="false" title="只突出选中智能体的协作关系（F）">
+              <svg class="icon"><use href="#i-focus"></use></svg>
+              <span>聚焦</span>
+            </button>
+          </div>
+        </figcaption>
+        <div class="stage" id="stage" role="group" aria-label="多智能体协作织造图：丝线表示委派与协作关系，可用滚轮缩放、拖动平移">
+          <div class="stage-zoom" id="stageZoom">
+            <div class="stage-grid" aria-hidden="true"></div>
+            <div class="orbits" aria-hidden="true"><span></span><span></span><span></span></div>
+            <svg class="edge-layer" id="edgeLayer" aria-hidden="true"></svg>
+            <div class="node-layer" id="nodeLayer"></div>
+          </div>
+          <div class="stage-now">
+            <span class="now-label">此刻</span>
+            <span class="now-time mono" id="nowTime">00:00</span>
+            <span class="now-text" id="nowText">等待开始</span>
+            <span class="now-hint">拖动时间轴回看</span>
+          </div>
+        </div>
+        <div class="plate-foot">
+          <span>丝线 ＝ 协作关系 · 结 ＝ 消息 · 朱印 ＝ 状态</span>
+          <span class="mono">滚轮缩放 / 拖动平移 · PLATE I · FIG. 1</span>
+        </div>
+      </figure>
+
+      <figure class="plate plate-weave reveal">
+        <figcaption class="plate-head">
+          <span class="plate-no">图版 II</span>
+          <div class="plate-title">
+            <h2>时间织带</h2>
+            <span>THE WEAVE</span>
+          </div>
+          <div class="plate-actions">
+            <div class="mode-switch" role="group" aria-label="时间模式：回放 / 直播">
+              <button class="mode-btn" id="replayMode" type="button" aria-pressed="true" title="回放模式">回放</button>
+              <button class="mode-btn mode-btn--live" id="liveMode" type="button" aria-pressed="false" title="进入直播（演示为加速直播）"><i class="live-dot" aria-hidden="true"></i>直播</button>
+            </div>
+            <button class="live-jump" id="liveJump" type="button" hidden title="跳到最新直播画面">回到直播</button>
+            <span class="lane-readout mono" id="laneTime">00:00</span>
+            <button class="weave-toggle" id="weaveToggle" type="button" aria-expanded="true" aria-controls="weaveBody">
+              <svg class="icon"><use href="#i-chevron-up"></use></svg>
+              <span>收起织带</span>
+            </button>
+          </div>
+        </figcaption>
+        <div class="weave-body" id="weaveBody">
+        <div class="lanes" id="lanes">
+          <div class="lane-labels" id="laneLabels"></div>
+          <div class="lane-tracks" id="laneTracks">
+            <div class="lane-ruler" id="laneRuler"></div>
+            <div class="lane-rows" id="laneRows"></div>
+            <svg class="lane-links" id="laneLinks" aria-hidden="true"></svg>
+            <div class="live-edge" id="liveEdgeLane" aria-hidden="true" hidden></div>
+            <div class="blocker-band" id="blockerBand" hidden><span class="blocker-label" id="blockerLabel"></span></div>
+            <div class="lane-edge-marks" id="laneEdgeMarks" aria-hidden="true"></div>
+            <div class="playhead" id="playhead" aria-hidden="true"><span class="playhead-cap"></span></div>
+          </div>
+          <input class="sr-only" type="range" id="scrubInput" min="0" max="700" step="1" value="0" aria-label="回放时间轴" aria-valuetext="00:00">
+        </div>
+        </div>
+        <div class="weave-compact" id="weaveCompact">
+          <div class="wc-top">
+            <span class="wc-caption">整体进度</span>
+            <span class="wc-time mono" id="wcTime">00:00</span>
+            <span class="wc-token mono" id="wcToken">0 TOK</span>
+            <span class="wc-stat" id="wcStat">0 / 7 完成</span>
+          </div>
+          <div class="wc-blocker-wrap" id="wcBlockerWrap" hidden>
+            <button class="wc-blocker-band" id="wcBlockerBand" type="button" aria-haspopup="dialog" aria-controls="blockerPop">
+              <span class="wc-blocker-fill" id="wcBlockerFill"></span>
+              <span class="wc-blocker-text" id="wcBlockerText">阻塞</span>
+            </button>
+          </div>
+          <div class="wc-track" id="wcTrack" role="slider" tabindex="0" aria-label="紧凑回放时间轴" aria-valuemin="0" aria-valuemax="700" aria-valuenow="0">
+            <span class="wc-fill" id="wcFill"></span>
+            <span class="wc-ticks" id="wcTicks"></span>
+            <span class="wc-selected" id="wcSelected" aria-hidden="true"></span>
+            <span class="wc-edge" id="wcEdge" aria-hidden="true"></span>
+            <span class="live-edge live-edge--compact" id="liveEdgeCompact" aria-hidden="true" hidden></span>
+            <span class="wc-head" id="wcHead"></span>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <div class="splitter splitter-right" id="splitRight" role="separator" aria-orientation="vertical" aria-label="拖动调整右栏宽度，双击复位" title="拖动调整右栏宽度 / 双击复位"></div>
+
+    <aside class="rail rail-right" aria-label="档案与旁注">
+      <section class="dossier reveal">
+        <div class="sect-head">
+          <span class="sect-no">03</span>
+          <h2>档案</h2>
+          <span class="sect-en">DOSSIER</span>
+          <button class="switch" id="followBtn" type="button" aria-pressed="true" title="自动跟随最新活跃智能体（G）">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span>自动跟随</span>
+          </button>
+        </div>
+        <div class="dossier-token" id="dossierToken">
+          <span class="dt-label">丝线消耗 / TOKENS</span>
+          <b class="dt-value mono" id="agentToken">0</b>
+          <span class="dt-share" id="agentTokenShare">占全局 0%</span>
+          <span class="dt-bar"><i id="agentTokenBar"></i></span>
+        </div>
+        <div class="inspector" id="inspector"></div>
+      </section>
+
+      <section class="notes reveal">
+        <div class="sect-head">
+          <span class="sect-no">04</span>
+          <h2>旁注</h2>
+          <span class="sect-en">FIELD NOTES</span>
+          <span class="sect-meta mono" id="feedCount">0 / 0</span>
+        </div>
+        <div class="feed-filters" id="feedFilters" role="group" aria-label="事件筛选"></div>
+        <div class="feed-scroll" id="feedScroll">
+          <ol class="feed-list" id="feedList" role="log" aria-live="off"></ol>
+        </div>
+        <button class="feed-jump" id="feedJump" type="button" hidden>
+          <svg class="icon"><use href="#i-chevron-up"></use></svg>
+          回到最新
+        </button>
+      </section>
+    </aside>
+  </main>
+
+  <div class="blocker-pop" id="blockerPop" role="dialog" aria-modal="false" aria-labelledby="blockerPopTitle" hidden>
+    <button class="bp-close" id="blockerPopClose" type="button" aria-label="关闭阻塞详情">
+      <svg class="icon"><use href="#i-x"></use></svg>
+    </button>
+    <div class="bp-eyebrow">阻塞记录 / BLOCKED</div>
+    <h3 id="blockerPopTitle">并发竞态阻塞</h3>
+    <p id="blockerPopDetail">Lens 发现幂等占位记录可被并发重试覆盖</p>
+    <dl class="bp-meta">
+      <div><dt>窗口</dt><dd id="bpWindow">07:10 – 09:38 · 02:28</dd></div>
+      <div><dt>发现</dt><dd>Lens 确认并发重试可覆盖占位</dd></div>
+      <div><dt>上报</dt><dd>Lens → Atlas</dd></div>
+      <div><dt>解除</dt><dd>Lens 复核通过 · 风险降级</dd></div>
+      <div><dt>影响</dt><dd>T4 安全与并发评审 · T5 竞态修复</dd></div>
+    </dl>
+    <div class="bp-actions">
+      <button id="bpJump" type="button">跳到阻塞开始</button>
+      <button id="bpLens" type="button">查看 Lens</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span class="footer-left"><i class="stamp-dot" aria-hidden="true"></i>脚本化模拟回放 · 非实时遥测</span>
+    <span class="footer-keys" aria-hidden="true">
+      <kbd>Space</kbd> 播放 / 暂停
+      <kbd>←</kbd><kbd>→</kbd> 跳转
+      <kbd>R</kbd> 重播
+      <kbd>F</kbd> 聚焦
+      <kbd>?</kbd> 快捷键
+    </span>
+    <span class="footer-right mono">WEAVE · SILK EDITION 02.8 / 2026</span>
+  </footer>
+</div>
+
+<dialog class="dialog" id="helpDialog" aria-labelledby="helpTitle">
+  <header class="dialog-head">
+    <div>
+      <span class="eyebrow">SHORTCUTS · 操作指南</span>
+      <h2 id="helpTitle">键盘与交互</h2>
+    </div>
+    <button class="icon-btn" type="button" data-close aria-label="关闭">
+      <svg class="icon"><use href="#i-x"></use></svg>
+    </button>
+  </header>
+  <div class="dialog-body">
+    <dl class="shortcut-list">
+      <div><dt><kbd>Space</kbd></dt><dd>播放 / 暂停回放</dd></div>
+      <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>后退 / 前进 10 秒（按住 Shift 为 60 秒）</dd></div>
+      <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>4</kbd></dt><dd>切换播放速度</dd></div>
+      <div><dt><kbd>R</kbd></dt><dd>从头重新播放</dd></div>
+      <div><dt><kbd>F</kbd></dt><dd>聚焦当前选中的智能体</dd></div>
+      <div><dt><kbd>G</kbd></dt><dd>开启 / 关闭自动跟随</dd></div>
+      <div><dt><kbd>?</kbd></dt><dd>打开这份操作指南</dd></div>
+      <div><dt>点击丝印</dt><dd>检视该智能体的当前工作、消息与产出</dd></div>
+      <div><dt>点击织带</dt><dd>跳转到该时间点，暂停回放</dd></div>
+      <div><dt>悬停丝线</dt><dd>在织带中标亮这两个智能体之间的协作时段</dd></div>
+      <div><dt><kbd>T</kbd></dt><dd>展开 / 收起完整织带（收起时为一根进度条）</dd></div>
+      <div><dt>拖动栏边</dt><dd>调整左右栏宽度（双击复位；聚焦后可用方向键微调）</dd></div>
+      <div><dt>直播 / 回放</dt><dd>点「直播」进入跟随模式；点「回放」退出。直播中拖动进度条即可回看，按「回到直播」一键追平最新画面（演示为加速直播）。</dd></div>
+      <div><dt>明暗主题</dt><dd>点击顶栏右侧的「日 / 月」滑动开关，在纸本与夜色之间切换；选择会自动记忆</dd></div>
+      <div><dt>缩放 / 平移</dt><dd>滚轮缩放协作图，拖动空白处平移（放大后），双击空白处或点百分比复位；也可用 + / − / 0</dd></div>
+      <div><dt>点击阻塞带</dt><dd>查看阻塞原因、时间窗与相关智能体，可跳转到阻塞起点</dd></div>
+    </dl>
+    <p class="dialog-note">
+      这是 Silk Edition 视觉原型：运行内容为脚本化模拟数据，用于演示「如何让多智能体协作过程更可读」，
+      不连接真实遥测。所有状态、消息与产出均随回放时间推导。
+    </p>
+  </div>
+</dialog>
+
+<div class="tip-toast" id="tipToast" role="status">空格播放 / 暂停 · 点击丝印检视 · 拖动织带回看</div>
+
+<script src="../data.js"></script>
+<script>
+/* Silk Edition palette + optional scale-test agents (?agents=7 / 8). */
+(function () {
+  var data = window.WEAVE_DATA;
+  var params = new URLSearchParams(window.location.search || "");
+  var target = parseInt(params.get("agents") || "0", 10) || 0;
+  var existing = data.agents || [];
+
+  // 可选的规模测试：追加并行智能体、任务、消息与事件
+  var roles = [
+    ["观察者", "OBSERVER", "search"], ["构造者", "BUILDER", "code"],
+    ["校验者", "VERIFIER", "shield"], ["记录者", "WRITER", "pen"],
+    ["连接者", "MENDER", "users"], ["测绘者", "MAPPER", "target"]
+  ];
+  var names = ["Nova", "Rook", "Vela", "Iris", "Kite", "Moss", "Tess", "Echo"];
+  // 小团队 QA：?agents=1..4 时裁掉多余成员及其任务/消息，保证数据自洽
+  if (target > 0 && target < existing.length) {
+    var keep = existing.slice(0, target);
+    var keepIds = {};
+    keep.forEach(function (a) { keepIds[a.id] = true; });
+    data.agents = keep;
+    data.tasks = (data.tasks || []).filter(function (t) { return keepIds[t.owner]; });
+    data.messages = (data.messages || []).filter(function (m) { return keepIds[m.from] && keepIds[m.to]; });
+    data.events = (data.events || []).filter(function (ev) { return !ev.actor || keepIds[ev.actor]; });
+    data.blocker = null;
+    existing = keep;
+  }
+
+  var extras = Math.max(0, Math.min(8, target - existing.length));
+  for (var i = 0; i < extras; i++) {
+    var idx = existing.length;
+    var id = "agent" + (idx + 1);
+    var role = roles[i % roles.length];
+    var name = names[i % names.length];
+    var start = 240 + i * 24;
+    var end = 430 + i * 24;
+    existing.push({
+      id: id, name: name, roleCn: role[0], roleEn: role[1], icon: role[2],
+      color: "#7b5a2e", model: "reasoner · 32k",
+      work: [{ s: start, e: end, label: "并行" + role[0], activity: "并行" + role[0] + "工作", task: null }]
+    });
+    (data.tasks || []).push({ id: "TX" + (idx + 1), title: "并行" + role[0] + "任务", owner: id, start: start, end: end, deps: ["T1"] });
+    (data.messages || []).push({ t: start, from: "atlas", to: id, travel: 26, tone: "delegate" });
+    (data.events || []).push({ t: start + 4, type: "delegate", actor: "atlas", target: id, text: "并行分派「" + role[0] + "」任务给 " + name, tag: "并行" });
+  }
+
+  var palette = { atlas: "#33495c", scout: "#2c6b70", forge: "#a65a2b", lens: "#6b3d57", quill: "#59682f" };
+  var pool = ["#33495c", "#2c6b70", "#a65a2b", "#6b3d57", "#59682f", "#7b5a2e", "#4a526e", "#7a3f3f", "#3d6b5c"];
+  existing.forEach(function (a, i) { a.color = palette[a.id] || pool[(i + 2) % pool.length]; });
+
+  try {
+    if (params.has("noblocker")) data.blocker = null;
+  } catch (e) {}
+})();
+</script>
+<script src="../app.js"></script>
+<script src="edition.js"></script>
+</body>
+</html>

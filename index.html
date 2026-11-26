@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#06090e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1017'/%3E%3Cpath d='M16 4.5 26.5 10.5v11L16 27.5 5.5 21.5v-11z' fill='none' stroke='%23d8f35a' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='16.4' r='2' fill='%23d8f35a'/%3E%3C/svg%3E">
+<title>Weave · 多智能体协作观测台</title>
+<meta name="description" content="面向多智能体协作的可观测界面原型：实时拓扑、执行泳道、事件流与智能体检视。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.6-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" stroke="none"/><rect x="14" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-restart" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3 6.3-2.1z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-3.5 8-10V5.5L12 2 4 5.5V12c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7.5 18.5 3 20l1.5-4.5z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></symbol>
+    <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M6 15V3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8.5 13h7M8.5 17h4.5"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="m19 15 .6 1.6 1.6.4-1.6.6L19 19.2l-.6-1.6-1.6-.6 1.6-.4z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m10.3 3.9-8.4 14.5A1.9 1.9 0 0 0 3.6 21h16.8a1.9 1.9 0 0 0 1.7-2.6L13.7 3.9a1.9 1.9 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-10.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+    <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M3 8V5a2 2 0 0 1 2-2h3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M21 16v3a2 2 0 0 1-2 2h-3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/></symbol>
+    <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9.5 14h5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-chevron-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l2.5-7 5 14 2.5-7h4"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  </defs>
+</svg>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 3.2 27.2 9.6v12.8L16 28.8 4.8 22.4V9.6z" fill="none" stroke="currentColor" stroke-opacity=".32" stroke-width="1.1"/>
+        <path d="M16 10.2 21.8 13.5v6.8L16 23.6l-5.8-3.3v-6.8z" fill="none" stroke="currentColor" stroke-opacity=".6" stroke-width="1.1"/>
+        <circle cx="16" cy="16.6" r="2.1" fill="currentColor"/>
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">weave</span>
+        <span class="brand-sub">多智能体协作观测台</span>
+      </span>
+    </div>
+
+    <div class="run-chip" id="runChip">
+      <span class="live-dot" aria-hidden="true"></span>
+      <span class="run-state" id="runState">回放中</span>
+      <span class="run-sep" aria-hidden="true"></span>
+      <span class="run-id mono">#<span id="runId">A7F3</span></span>
+      <span class="run-goal" id="runGoalShort">支付网关 · 幂等层重构</span>
+      <span class="run-badge" title="脚本化场景，非实时遥测">模拟数据</span>
+    </div>
+
+    <div class="transport" aria-label="回放控制">
+      <button class="icon-btn" id="restartBtn" type="button" title="重新播放（R）" aria-label="重新播放">
+        <svg class="icon"><use href="#i-restart"></use></svg>
+      </button>
+      <button class="play-btn" id="playBtn" type="button" aria-label="暂停回放">
+        <svg class="icon play-btn-icon" id="playIcon"><use href="#i-pause" id="playIconUse"></use></svg>
+        <span id="playLabel">暂停</span>
+      </button>
+      <div class="speed" role="group" aria-label="播放速度">
+        <button class="speed-btn" type="button" data-speed="1" aria-pressed="true">1×</button>
+        <button class="speed-btn" type="button" data-speed="2" aria-pressed="false">2×</button>
+        <button class="speed-btn" type="button" data-speed="4" aria-pressed="false">4×</button>
+      </div>
+      <div class="clock" aria-label="回放时间">
+        <span class="mono" id="timeNow">00:00</span>
+        <span class="clock-sep">/</span>
+        <span class="mono clock-total" id="timeTotal">11:40</span>
+      </div>
+      <button class="icon-btn" id="helpBtn" type="button" title="键盘快捷键（?）" aria-label="键盘快捷键">
+        <svg class="icon"><use href="#i-keyboard"></use></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="rail rail-left" aria-label="运行概览">
+      <section class="panel panel-goal reveal" style="--i:0">
+        <header class="panel-head">
+          <span class="eyebrow">RUN · 运行目标</span>
+          <span class="panel-meta" id="runStarted">09:14 启动</span>
+        </header>
+        <div class="goal-body">
+          <div class="goal-ringwrap" aria-hidden="true">
+            <svg class="goal-ring" viewBox="0 0 76 76">
+              <circle class="ring-track" cx="38" cy="38" r="30"/>
+              <circle class="ring-value" id="goalRing" cx="38" cy="38" r="30"/>
+            </svg>
+            <span class="goal-pct mono" id="goalPct">0<span class="pct-sign">%</span></span>
+          </div>
+          <div class="goal-copy">
+            <h1 id="goalTitle">重构支付网关幂等层，消除重复扣款</h1>
+            <p class="goal-meta"><span id="goalProject">pay-gateway</span><span class="dot-sep">·</span><span id="goalBranch" class="mono">fix/idempotency-layer</span></p>
+            <p class="goal-elapsed">已用时 <b class="mono" id="goalElapsed">00:00</b><span class="elapsed-sep">/</span>预计 <b class="mono" id="goalEta">11:40</b></p>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><span class="stat-label">并行智能体</span><span class="stat-value mono" id="statActive">0<i>/5</i></span></div>
+          <div class="stat"><span class="stat-label">完成事项</span><span class="stat-value mono" id="statDone">0<i>/7</i></span></div>
+          <div class="stat"><span class="stat-label">工具调用</span><span class="stat-value mono" id="statCalls">0</span></div>
+          <div class="stat" id="statBlockedCell"><span class="stat-label">阻塞</span><span class="stat-value mono" id="statBlocked">0</span></div>
+        </div>
+      </section>
+
+      <section class="panel panel-tasks reveal" style="--i:1">
+        <header class="panel-head">
+          <span class="eyebrow">TASK GRAPH · 任务分解</span>
+          <span class="panel-meta mono" id="taskCount">0/7</span>
+        </header>
+        <ol class="task-list" id="taskList" aria-label="任务列表"></ol>
+      </section>
+    </aside>
+
+    <section class="center">
+      <section class="panel panel-stage reveal" style="--i:2">
+        <header class="panel-head">
+          <div class="panel-title">
+            <span class="eyebrow">COLLABORATION GRAPH · 协作拓扑</span>
+            <h2>谁在做什么</h2>
+          </div>
+          <div class="panel-actions">
+            <div class="legend" aria-hidden="true">
+              <span><i class="lg-dot lg-active"></i>执行中</span>
+              <span><i class="lg-dot lg-wait"></i>等待</span>
+              <span><i class="lg-dot lg-done"></i>已完成</span>
+            </div>
+            <button class="chip-btn" id="focusBtn" type="button" aria-pressed="false" title="只突出选中智能体的协作关系（F）">
+              <svg class="icon"><use href="#i-focus"></use></svg>
+              <span>聚焦</span>
+            </button>
+          </div>
+        </header>
+        <div class="stage" id="stage" role="group" aria-label="多智能体协作拓扑：Atlas 作为编排者连接 Scout、Forge、Lens、Quill，连线表示委派与协作关系">
+          <div class="stage-grid" aria-hidden="true"></div>
+          <div class="orbits" aria-hidden="true"><span></span><span></span><span></span></div>
+          <svg class="edge-layer" id="edgeLayer" aria-hidden="true"></svg>
+          <div class="node-layer" id="nodeLayer"></div>
+          <div class="stage-now">
+            <span class="now-label">此刻</span>
+            <span class="now-time mono" id="nowTime">00:00</span>
+            <span class="now-text" id="nowText">等待开始</span>
+            <span class="now-hint">拖动泳道时间轴回看</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-lanes reveal" style="--i:3">
+        <header class="panel-head">
+          <div class="panel-title">
+            <span class="eyebrow">EXECUTION TIMELINE · 执行泳道</span>
+            <h2>谁在什么时候工作</h2>
+          </div>
+          <div class="panel-actions">
+            <span class="lane-readout mono" id="laneTime">00:00</span>
+            <span class="panel-meta">点击 / 拖动时间轴跳转</span>
+          </div>
+        </header>
+        <div class="lanes" id="lanes">
+          <div class="lane-labels" id="laneLabels"></div>
+          <div class="lane-tracks" id="laneTracks">
+            <div class="lane-ruler" id="laneRuler"></div>
+            <div class="lane-rows" id="laneRows"></div>
+            <svg class="lane-links" id="laneLinks" aria-hidden="true"></svg>
+            <div class="blocker-band" id="blockerBand" hidden><span class="blocker-label" id="blockerLabel"></span></div>
+            <div class="playhead" id="playhead" aria-hidden="true"><span class="playhead-cap"></span></div>
+          </div>
+          <input class="sr-only" type="range" id="scrubInput" min="0" max="700" step="1" value="0" aria-label="回放时间轴" aria-valuetext="00:00">
+        </div>
+      </section>
+    </section>
+
+    <aside class="rail rail-right" aria-label="检视与事件">
+      <section class="panel panel-inspector reveal" style="--i:4">
+        <header class="panel-head">
+          <span class="eyebrow">AGENT INSPECTOR · 智能体检视</span>
+          <button class="switch" id="followBtn" type="button" aria-pressed="true" title="自动跟随最新活跃智能体（G）">
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+            <span>自动跟随</span>
+          </button>
+        </header>
+        <div class="inspector" id="inspector"></div>
+      </section>
+
+      <section class="panel panel-feed reveal" style="--i:5">
+        <header class="panel-head">
+          <span class="eyebrow">EVENT STREAM · 事件流</span>
+          <span class="panel-meta mono" id="feedCount">0 / 0</span>
+        </header>
+        <div class="feed-filters" id="feedFilters" role="group" aria-label="事件筛选"></div>
+        <div class="feed-scroll" id="feedScroll">
+          <ol class="feed-list" id="feedList" role="log" aria-live="off"></ol>
+        </div>
+        <button class="feed-jump" id="feedJump" type="button" hidden>
+          <svg class="icon"><use href="#i-chevron-up"></use></svg>
+          回到最新
+        </button>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="statusbar">
+    <span class="status-left"><i class="demo-dot" aria-hidden="true"></i>演示环境 · 场景与数据为脚本化模拟回放</span>
+    <span class="status-keys" aria-hidden="true">
+      <kbd>Space</kbd> 播放/暂停
+      <kbd>←</kbd><kbd>→</kbd> 跳转
+      <kbd>R</kbd> 重播
+      <kbd>F</kbd> 聚焦
+      <kbd>?</kbd> 快捷键
+    </span>
+    <span class="status-right mono">WEAVE OBS · v0.9</span>
+  </footer>
+</div>
+
+<dialog class="dialog" id="helpDialog" aria-labelledby="helpTitle">
+  <header class="dialog-head">
+    <div>
+      <span class="eyebrow">SHORTCUTS · 操作指南</span>
+      <h2 id="helpTitle">键盘与交互</h2>
+    </div>
+    <button class="icon-btn" type="button" data-close aria-label="关闭">
+      <svg class="icon"><use href="#i-x"></use></svg>
+    </button>
+  </header>
+  <div class="dialog-body">
+    <dl class="shortcut-list">
+      <div><dt><kbd>Space</kbd></dt><dd>播放 / 暂停回放</dd></div>
+      <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>后退 / 前进 10 秒（按住 Shift 为 60 秒）</dd></div>
+      <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>4</kbd></dt><dd>切换播放速度</dd></div>
+      <div><dt><kbd>R</kbd></dt><dd>从头重新播放</dd></div>
+      <div><dt><kbd>F</kbd></dt><dd>聚焦当前选中的智能体</dd></div>
+      <div><dt><kbd>G</kbd></dt><dd>开启 / 关闭自动跟随</dd></div>
+      <div><dt><kbd>?</kbd></dt><dd>打开这份操作指南</dd></div>
+      <div><dt>点击节点</dt><dd>检视该智能体的当前工作、消息与产出</dd></div>
+      <div><dt>点击泳道</dt><dd>跳转到该时间点，暂停回放</dd></div>
+    </dl>
+    <p class="dialog-note">
+      本页面是一份视觉与交互原型：运行内容为脚本化模拟数据，用于演示「如何让多智能体协作过程更可读」，
+      不连接真实遥测。图表中的状态、消息与产出均随回放时间推导。
+    </p>
+  </div>
+</dialog>
+
+<div class="tip-toast" id="tipToast" role="status">空格播放 / 暂停 · 点击节点检视 · 拖动泳道回看</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

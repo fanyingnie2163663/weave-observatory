@@ -1,0 +1,92 @@
+/* ==========================================================================
+   LIVE / REPLAY — simulated livestream timeshift (Edition 02.8)
+   ========================================================================== */
+
+.mode-switch {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  flex: none;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-light);
+}
+.mode-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 7px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.18s, background 0.18s;
+}
+.mode-btn + .mode-btn { border-left: 1px solid var(--rule); }
+.mode-btn:hover { color: var(--ink); }
+.mode-btn[aria-pressed="true"] { color: var(--paper-light); background: var(--ink); }
+.mode-btn--live[aria-pressed="true"] { color: var(--paper-light); background: var(--accent); }
+
+.live-dot {
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.mode-btn--live[aria-pressed="true"] .live-dot { background: var(--paper-light); }
+.app.is-live.is-live-following .mode-btn--live .live-dot { animation: dotPulse 1.8s var(--ease) infinite; }
+
+.live-jump {
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.live-jump:hover { background: var(--accent); color: var(--paper-light); }
+.live-jump[hidden] { display: none; }
+
+.app.is-live .speed { opacity: 0.4; pointer-events: none; }
+
+/* the live edge is only visible when the playhead is behind it */
+.live-edge {
+  position: absolute;
+  z-index: 4;
+  top: 20px;
+  bottom: 0;
+  width: 1px;
+  background: var(--accent);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.live-edge::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 2px var(--paper-light);
+}
+.live-edge[hidden] { display: none; }
+.live-edge--compact { top: -4px; bottom: -4px; }
+.live-edge--compact::before { width: 5px; height: 5px; }
+
+@media (max-width: 760px) {
+  .plate-weave .lane-readout { display: none; }
+  .mode-btn { padding: 0 6px; }
+  .live-jump { padding: 0 6px; font-size: 7.5px; }
+}

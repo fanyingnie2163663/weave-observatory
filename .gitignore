@@ -1,0 +1,21 @@
+# —— 本地迭代产物，不随仓库发布 ——
+# 过程截图（约 107MB，仅本地保留）
+_shots/
+# 嵌入构建：含 tmp/ 与 dist/ 产物
+weave-embed/
+# DSH 会话视图插件（依赖内部运行时）
+dsh-client-ui-weave/
+# 内部探针与测试脚手架
+tools/
+.probe/
+smoke3.out
+*.out
+# 内部计划与契约文档
+PLAN-weave-dsh.md
+docs/dsh-weave-contract.md
+
+# —— 通用 ——
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

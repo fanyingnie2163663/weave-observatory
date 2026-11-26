@@ -1,4 +1,4 @@
-<p align="right"><img src="assets/icon-180.png" width="88" alt="Weave 织造观测台"></p>
+<p><img src="assets/icon-180.png" width="76" align="left" hspace="18" vspace="6" alt="Weave 织造观测台"></p>
 
 # Weave · 织造观测台
 
@@ -10,7 +10,20 @@
 
 **Silk Edition 02.8** · 入口：[`v2/index.html`](v2/index.html)
 
+<br clear="all">
+
 ![织造观测台：协作织造图与时间织带](docs/shots/hero.png)
+
+---
+
+## 参与
+
+这是一个还在打磨中的视觉与交互原型，**欢迎 Issue 和 PR**：
+
+- **Star**：如果「协作过程可视化」这个方向对你有用，点个 ⭐ 是最直接的支持；
+- **真实 trace**：把一次真实多智能体运行按「如何替换数据」的六块映射成 `WEAVE_DATA`，欢迎开 Issue 贴截图或数据（记得脱敏）；
+- **PR 欢迎**：视觉 / 交互改进、映射器适配其他 trace 格式（如 Agent Teams、OpenTelemetry）、DSH 插件兼容性修复；
+- **本地预览**：无构建步骤，直接改 `index.html` / `v2/index.html` 即可；改插件时跑 `node dsh-client-ui-weave/test-smoke.mjs`。
 
 ---
 
@@ -150,15 +163,6 @@ dsh plugin add dsh-client-ui-weave
 - **单次运行**：没有多运行对比、跨运行检索；
 - **只读观测**：不支持在界面上批准、暂停或重派任务；
 - **动效克制**：若需要更强的现场感（例如任务完成微动效、语音解说），需同步提供 `prefers-reduced-motion` 的静态替代。
-
-## 参与
-
-这是一个还在打磨中的视觉与交互原型，**欢迎 Issue 和 PR**：
-
-- **Star**：如果「协作过程可视化」这个方向对你有用，点个 ⭐ 是最直接的支持；
-- **真实 trace**：把一次真实多智能体运行按上一节的六块映射成 `WEAVE_DATA`，欢迎开 Issue 贴截图或数据（记得脱敏）；
-- **PR 欢迎**：视觉 / 交互改进、映射器适配其他 trace 格式（如 Agent Teams、OpenTelemetry）、DSH 插件兼容性修复；
-- **本地预览**：无构建步骤，直接改 `index.html` / `v2/index.html` 即可；改插件时跑 `node dsh-client-ui-weave/test-smoke.mjs`。
 
 ## License
 

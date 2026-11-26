@@ -127,6 +127,16 @@ docs/shots/    README 配图（hero / lanes / tablet / mobile）
 - **只读观测**：不支持在界面上批准、暂停或重派任务；
 - **动效克制**：若需要更强的现场感（例如任务完成微动效、语音解说），需同步提供 `prefers-reduced-motion` 的静态替代。
 
+## DSH 插件
+
+同一份界面也打包成 DeepSeek Harness 的会话视图插件：在聊天 / 轨迹 / 统计之外多一个「织造」标签页。
+
+```bash
+dsh plugin add dsh-client-ui-weave
+```
+
+源码见 [`dsh-client-ui-weave/`](dsh-client-ui-weave/)，npm 包：[`dsh-client-ui-weave`](https://www.npmjs.com/package/dsh-client-ui-weave)。
+
 ## License
 
 MIT License · © 2026 聂凡瑛（fanyingnie）

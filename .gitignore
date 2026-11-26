@@ -3,8 +3,6 @@
 _shots/
 # 嵌入构建：含 tmp/ 与 dist/ 产物
 weave-embed/
-# DSH 会话视图插件（依赖内部运行时）
-dsh-client-ui-weave/
 # 内部探针与测试脚手架
 tools/
 .probe/

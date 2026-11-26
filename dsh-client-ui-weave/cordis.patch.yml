@@ -1,0 +1,5 @@
+# Weave bundle patch: inserts this plugin's loader row into the profile roster.
+# Loaded because the package is listed in the profile's dsh.profile.bundles.
+- insert:
+    - id: ui-weave
+      name: 'dsh-client-ui-weave'

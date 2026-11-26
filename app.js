@@ -95,7 +95,7 @@
   var EDGE_DEFS = buildEdgeDefs();
   if (typeof window !== "undefined") window.WEAVE_EDGES = EDGE_DEFS;
 
-  /* 有谱系数据时按 DSH 会话树排布；无谱系的演示数据沿用菱形/环形。 */
+  /* 有谱系数据时按会话谱系树排布；无谱系的演示数据沿用菱形/环形。 */
   function treePositions(compact, stageWidth, lead) {
     var positions = {};
     var children = {};

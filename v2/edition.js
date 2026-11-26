@@ -39,7 +39,7 @@
   var DATA = window.WEAVE_DATA || { agents: [], tasks: [], meta: { duration: 700 } };
   var END = (DATA.meta && DATA.meta.duration) || 700;
 
-  /* 真实 token：优先使用 WEAVE_DATA.meta.tokens.segments（DSH 投影），
+  /* 真实 token：优先使用 WEAVE_DATA.meta.tokens.segments（会话投影），
      仅原型演示数据没有该字段时退回模拟模型。真实值按工作段时长分摊，
      这样时间轴上的累计曲线仍然成立，但总量与来源真实。 */
   function realTokenTotal(agent) {
